@@ -92,10 +92,8 @@ param gatewaySku string = 'Standard'
 
 var erSKU_Name = '${erSKU_Tier}_${erSKU_Family}'
 var gatewayPublicIPName = '${gatewayName}-pubIP'
-// var nsgName = 'nsg'
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/expressroutecircuits
-// resource erCircuit 'Microsoft.Network/expressRouteCircuits@2021-05-01' = {
 resource erCircuit 'Microsoft.Network/expressRouteCircuits@2022-09-01' = {
   name: erCircuitName
   location: location
@@ -115,7 +113,6 @@ resource erCircuit 'Microsoft.Network/expressRouteCircuits@2022-09-01' = {
 }
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/expressroutecircuits
-// resource epeering 'Microsoft.Network/expressRouteCircuits/peerings@2021-05-01' = {
 resource epeering 'Microsoft.Network/expressRouteCircuits/peerings@2022-09-01' = {
   parent: erCircuit
   name: 'AzurePrivatePeering'
@@ -128,45 +125,7 @@ resource epeering 'Microsoft.Network/expressRouteCircuits/peerings@2022-09-01' =
   }
 }
 
-// resource nsg 'Microsoft.Network/networkSecurityGroups@2021-05-01' = {
-//   name: nsgName
-//   location: location
-//   properties: {
-//     securityRules: [
-//       {
-//         name: 'SSH-rule'
-//         properties: {
-//           description: 'allow SSH'
-//           protocol: 'Tcp'
-//           sourcePortRange: '*'
-//           destinationPortRange: '22'
-//           sourceAddressPrefix: '*'
-//           destinationAddressPrefix: 'VirtualNetwork'
-//           access: 'Allow'
-//           priority: 500
-//           direction: 'Inbound'
-//         }
-//       }
-//       {
-//         name: 'RDP-rule'
-//         properties: {
-//           description: 'allow RDP'
-//           protocol: 'Tcp'
-//           sourcePortRange: '*'
-//           destinationPortRange: '3389'
-//           sourceAddressPrefix: '*'
-//           destinationAddressPrefix: 'VirtualNetwork'
-//           access: 'Allow'
-//           priority: 600
-//           direction: 'Inbound'
-//         }
-//       }
-//     ]
-//   }
-// }
-
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworks?pivots=deployment-language-bicep
-// resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 resource vnet 'Microsoft.Network/virtualNetworks@2022-09-01' = {
   name: vnetName
   location: location
@@ -177,15 +136,6 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-09-01' = {
       ]
     }
     subnets: [
-      // {
-      //   name: subnet1Name
-      //   properties: {
-      //     addressPrefix: subnet1Prefix
-      //     networkSecurityGroup: {
-      //       id: nsg.id
-      //     }
-      //   }
-      // }
       {
         name: 'GatewaySubnet'
         properties: {
@@ -197,7 +147,6 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-09-01' = {
 }
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/publicipaddresses?pivots=deployment-language-bicep
-// resource publicIP 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
 resource publicIP 'Microsoft.Network/publicIPAddresses@2022-09-01' = {
   name: gatewayPublicIPName
   location: location
@@ -207,7 +156,6 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2022-09-01' = {
 }
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworkgateways
-// resource gateway 'Microsoft.Network/virtualNetworkGateways@2021-05-01' = {
 resource gateway 'Microsoft.Network/virtualNetworkGateways@2022-09-01' = {
   name: gatewayName
   location: location
