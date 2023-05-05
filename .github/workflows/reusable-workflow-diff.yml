@@ -1,0 +1,74 @@
+# https://learn.microsoft.com/en-us/azure/expressroute/quickstart-create-expressroute-vnet-bicep?tabs=CLI
+name: diff azure express route circuit with private peering
+
+on:
+  workflow_call:
+    inputs:
+      resource-group-name:
+        description: The name of the resource group that the storage account will be placed into
+        default: exampleRG
+        required: false
+        type: string
+      location:
+        description: The azure location/region to deploy the resources into
+        default: westus2
+        required: false
+        type: string
+      runs-on:
+        required: false
+        default: '["ubuntu-latest"]'
+        type: string
+    secrets:
+      tenant-id:
+        description: The azure tenant id you are deploying to
+        required: true
+      subscription-id:
+        description: Your azure subscription id
+        required: true
+      client-id:
+        description: The Azure Service Principal id with access to deploy to your subscription
+        required: true
+      client-secret:
+        description: The Azure Service Principal password with access to deploy to your subscription
+        required: true
+
+# Allow one concurrent deployment
+concurrency:
+  group: rw-azure-diff-erc
+  cancel-in-progress: true
+
+jobs:
+  rw-azure-diff-erc:
+    name: reusable workflow that diffs an ExpressRoute circuit
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
+
+    steps:
+      # clones this repo.  Remember that this does not run in this repo, it runs a client repo.
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          repository: JasonCubic/erc-with-peering
+          path: ./.github/modules/erc-with-peering
+
+      # note: can put in things like custom validation actions here to make sure values are set correctly
+
+      # Log into Azure
+      - uses: Azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.client-id }}","clientSecret":"${{ secrets.client-secret }}","subscriptionId":"${{ secrets.subscription-id }}","tenantId":"${{ secrets.tenant-id }}"}'
+          enable-AzPSSession: false
+
+      - name: deploy azure ExpressRoute circuit with private peering
+        uses: azure/arm-deploy@v1
+        with:
+          deploymentName: ga-diff-erc-${{ env.GITHUB_REPOSITORY }}-${{ env.GITHUB_RUN_NUMBER }}
+          scope: resourcegroup
+          subscriptionId: ${{ secrets.subscription-id }}
+          resourceGroupName: ${{ inputs.resource-group-name }}
+          template: ./.github/modules/erc-with-peering/main.bicep
+          failOnStdErr: true
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+          parameters: >
+            location=${{ inputs.location }}
+

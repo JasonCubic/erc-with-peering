@@ -1,0 +1,13 @@
+name: erc diff/Drift Detection azure example
+
+on:
+  workflow_dispatch: # Manually triggered by the user in GitHub repo on the Actions tab
+
+jobs:
+  azure-deploy-test:
+    uses: JasonCubic/erc-with-peering/.github/workflows/reusable-workflow-diff.yml@main
+    secrets:
+      tenant-id: ${{ secrets.TENANT_ID }}
+      subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+      client-id: ${{ secrets.CLIENT_ID }}
+      client-secret: ${{ secrets.CLIENT_SECRET }}

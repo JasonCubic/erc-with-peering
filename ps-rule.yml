@@ -1,0 +1,86 @@
+#
+# PSRule configuration
+#
+# Please see the documentation for all configuration options:
+#   https://aka.ms/ps-rule/options
+#   https://aka.ms/ps-rule-azure/options
+
+# Configure binding for local rules.
+binding:
+  preferTargetInfo: true
+  targetType:
+    - type
+    - resourceType
+
+# https://github.com/microsoft/PSRule
+# Require minimum versions of modules.
+requires:
+  PSRule: "@pre >=2.7.0"
+  PSRule.Rules.Azure: "@pre >=1.24.2"
+
+# https://azure.github.io/PSRule.Rules.Azure/en/baselines/Azure.Default/
+# Use PSRule for Azure.
+include:
+  module:
+    - PSRule.Rules.Azure
+
+output:
+  culture:
+    - "en-US"
+
+input:
+  pathIgnore:
+    # Ignore other files in the repository.
+    - ".vscode/"
+    - ".git/"
+    - ".github/"
+    - "*.md"
+    - ".editorconfig"
+    - ".ps-rule"
+    - "templates/"
+
+    # # Exclude modules but not tests.
+    # - "bicep/**/*.bicep"
+    # - "!bicep/**/*.test.bicep"
+
+# https://azure.github.io/PSRule.Rules.Azure/setup/setup-bicep/
+configuration:
+  # Enable automatic expansion of Azure parameter files.
+  # https://azure.github.io/PSRule.Rules.Azure/using-bicep/#using-parameter-files
+  AZURE_PARAMETER_FILE_EXPANSION: true
+
+  # Enable automatic expansion of Azure Bicep source files.
+  # https://azure.github.io/PSRule.Rules.Azure/setup/setup-bicep/#configuring-expansion
+  AZURE_BICEP_FILE_EXPANSION: true
+
+  # Configures the number of seconds to wait for build Bicep files.
+  # https://azure.github.io/PSRule.Rules.Azure/setup/setup-bicep/#configuring-timeout
+  AZURE_BICEP_FILE_EXPANSION_TIMEOUT: 10
+
+  # Enable Bicep CLI checks.
+  # https://azure.github.io/PSRule.Rules.Azure/setup/setup-bicep/#checking-bicep-version
+  AZURE_BICEP_CHECK_TOOL: true
+
+  # Configure the minimum version of the Bicep CLI.
+  # https://azure.github.io/PSRule.Rules.Azure/setup/setup-bicep/#configuring-minimum-version
+  AZURE_BICEP_MINIMUM_VERSION: "0.16.2"
+
+rule:
+  exclude:
+    # https://azure.github.io/PSRule.Rules.Azure/en/rules/Azure.PublicIP.AvailabilityZone/
+    # We do not need the public IP AvailabilityZone rule because the only public IP being used
+    # by the express route used is for a public IP that is not actually being used at all
+    # Public IP on the Virtual Network Gateway is unneeded for the type of peering we use
+    # https://learn.microsoft.com/en-us/azure/expressroute/expressroute-routing#ip-addresses-used-for-azure-private-peering
+    # - Azure.PublicIP.AvailabilityZone
+    - Azure.PublicIP.StandardSKU
+
+    # We are not implementing a bastion virtual network at this stage of the DTCC Module
+    # https://azure.github.io/PSRule.Rules.Azure/en/rules/Azure.VNET.BastionSubnet/
+    - Azure.VNET.BastionSubnet
+
+    # Expectation is the consumer of this module will be
+    # building out a hub utilizing this module that includes a firewall.
+    # We are planning to provide a separate firewall solution in another module
+    # https://azure.github.io/PSRule.Rules.Azure/en/rules/Azure.VNET.FirewallSubnet/
+    - Azure.VNET.FirewallSubnet
