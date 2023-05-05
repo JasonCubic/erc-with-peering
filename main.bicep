@@ -95,7 +95,8 @@ var gatewayPublicIPName = '${gatewayName}-pubIP'
 // var nsgName = 'nsg'
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/expressroutecircuits
-resource erCircuit 'Microsoft.Network/expressRouteCircuits@2021-05-01' = {
+// resource erCircuit 'Microsoft.Network/expressRouteCircuits@2021-05-01' = {
+resource erCircuit 'Microsoft.Network/expressRouteCircuits@2022-09-01' = {
   name: erCircuitName
   location: location
   sku: {
@@ -114,7 +115,8 @@ resource erCircuit 'Microsoft.Network/expressRouteCircuits@2021-05-01' = {
 }
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/expressroutecircuits
-resource epeering 'Microsoft.Network/expressRouteCircuits/peerings@2021-05-01' = {
+// resource epeering 'Microsoft.Network/expressRouteCircuits/peerings@2021-05-01' = {
+resource epeering 'Microsoft.Network/expressRouteCircuits/peerings@2022-09-01' = {
   parent: erCircuit
   name: 'AzurePrivatePeering'
   properties: {
@@ -164,7 +166,8 @@ resource epeering 'Microsoft.Network/expressRouteCircuits/peerings@2021-05-01' =
 // }
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworks?pivots=deployment-language-bicep
-resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
+// resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2022-09-01' = {
   name: vnetName
   location: location
   properties: {
@@ -194,7 +197,8 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
 }
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/publicipaddresses?pivots=deployment-language-bicep
-resource publicIP 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
+// resource publicIP 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
+resource publicIP 'Microsoft.Network/publicIPAddresses@2022-09-01' = {
   name: gatewayPublicIPName
   location: location
   properties: {
@@ -203,7 +207,8 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
 }
 
 // https://learn.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworkgateways
-resource gateway 'Microsoft.Network/virtualNetworkGateways@2021-05-01' = {
+// resource gateway 'Microsoft.Network/virtualNetworkGateways@2021-05-01' = {
+resource gateway 'Microsoft.Network/virtualNetworkGateways@2022-09-01' = {
   name: gatewayName
   location: location
   properties: {
