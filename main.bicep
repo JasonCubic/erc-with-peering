@@ -186,6 +186,33 @@ resource gateway 'Microsoft.Network/virtualNetworkGateways@2022-09-01' = {
   ]
 }
 
+// https://learn.microsoft.com/en-us/azure/templates/microsoft.network/connections
+resource erGWConnection 'Microsoft.Network/connections@2022-09-01' = {
+  name: 'ERCP2tstGWConnection'
+  location: location
+  properties: {
+    connectionMode: 'Default'
+    connectionType: 'ExpressRoute'
+    dpdTimeoutSeconds: 0
+    enableBgp: false
+    enablePrivateLinkFastPath: false
+    expressRouteGatewayBypass: false
+    peer: {
+      id: erCircuit.id
+    }
+    routingWeight: 0
+    trafficSelectorPolicies: [
+    ]
+    useLocalAzureIpAddress: false
+    usePolicyBasedTrafficSelectors: false
+    virtualNetworkGateway1: {
+      id: gateway.id
+      properties: {
+      }
+    }
+  }
+}
+
 output erCircuitName string = erCircuitName
 output gatewayName string = gatewayName
 output gatewaySku string = gatewaySku
